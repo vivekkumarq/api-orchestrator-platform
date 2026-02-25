@@ -75,3 +75,6 @@ Error handling (4xx/5xx, timeouts)
 Persist request history
 Click history to re-run requests
 Clean UI
+
+
+<img width="1894" height="919" alt="image" src="https://github.com/user-attachments/assets/cef59c32-1ebb-4b52-86ac-d772a1a7d768" />
