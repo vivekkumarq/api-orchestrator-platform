@@ -1,0 +1,77 @@
+/* App.css */
+
+body {
+    background: linear-gradient(135deg, #0f172a, #020617);
+    color: #e5e7eb;
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    margin: 0;
+}
+
+h1,
+h2,
+h3 {
+    color: #f8fafc;
+}
+
+input,
+textarea,
+select {
+    width: 100%;
+    padding: 10px;
+    background: #020617;
+    border: 1px solid #1e293b;
+    border-radius: 6px;
+    color: #e5e7eb;
+    outline: none;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: #38bdf8;
+}
+
+button {
+    margin-top: 10px;
+    padding: 10px 16px;
+    background: linear-gradient(135deg, #38bdf8, #6366f1);
+    color: #020617;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+pre {
+    background: #020617;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 12px;
+    max-height: 300px;
+    overflow: auto;
+    font-size: 13px;
+}
+
+label {
+    font-size: 14px;
+    color: #cbd5f5;
+}
+
+.history-card {
+    border: 1px solid #1e293b;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+    background: rgba(2, 6, 23, 0.7);
+    transition: all 0.2s ease;
+}
+
+.history-card:hover {
+    border-color: #38bdf8;
+    transform: translateY(-2px);
+    box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.2);
+}
