@@ -1,0 +1,57 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: orchestrator-db
+    environment:
+      POSTGRES_DB: ${DB_NAME:-orchestrator}
+      POSTGRES_USER: ${DB_USERNAME:-orchestrator}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-orchestrator}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-orchestrator} -d ${DB_NAME:-orchestrator}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./api-orchestrator
+    container_name: orchestrator-backend
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_URL: jdbc:postgresql://db:5432/${DB_NAME:-orchestrator}
+      DB_USERNAME: ${DB_USERNAME:-orchestrator}
+      DB_PASSWORD: ${DB_PASSWORD:-orchestrator}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:5173}
+      # The prod profile refuses private address space by default. Setting this
+      # to true lets anyone who can call the API reach anything this container
+      # can reach, including the other services on this compose network.
+      ALLOW_PRIVATE_NETWORKS: ${ALLOW_PRIVATE_NETWORKS:-false}
+      EXECUTOR_DEFAULT_TIMEOUT_MS: ${EXECUTOR_DEFAULT_TIMEOUT_MS:-10000}
+      EXECUTOR_MAX_RESPONSE_BYTES: ${EXECUTOR_MAX_RESPONSE_BYTES:-1048576}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./api-orchestrator-ui
+      args:
+        # Baked into the bundle at build time, so this is a build argument
+        # rather than a runtime environment variable.
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8080}
+    container_name: orchestrator-ui
+    depends_on:
+      - backend
+    ports:
+      - "${FRONTEND_PORT:-5173}:80"
+    restart: unless-stopped
+
+volumes:
+  db-data:
