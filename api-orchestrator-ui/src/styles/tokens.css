@@ -1,0 +1,193 @@
+/* ---------------------------------------------------------------------------
+   Design tokens and reset.
+
+   Dark is the default; the light palette applies when the document element
+   carries data-theme="light". App.jsx picks the theme from localStorage and
+   falls back to the operating system preference.
+   ------------------------------------------------------------------------- */
+
+:root {
+  --bg-base: #0b1020;
+  --bg-panel: #111832;
+  --bg-panel-2: #161f3d;
+  --bg-inset: #080d1b;
+  --bg-hover: #1c2748;
+  --bg-active: #223059;
+
+  --border: #223056;
+  --border-strong: #2e3f6d;
+
+  --text: #e6ecfb;
+  --text-muted: #94a3c4;
+  --text-faint: #64748b;
+
+  --accent: #4f8cff;
+  --accent-strong: #6ea3ff;
+  --accent-soft: rgba(79, 140, 255, 0.14);
+
+  --success: #34d399;
+  --success-soft: rgba(52, 211, 153, 0.14);
+  --warning: #fbbf24;
+  --warning-soft: rgba(251, 191, 36, 0.14);
+  --danger: #f87171;
+  --danger-soft: rgba(248, 113, 113, 0.14);
+
+  --method-get: #34d399;
+  --method-post: #fbbf24;
+  --method-put: #60a5fa;
+  --method-patch: #c084fc;
+  --method-delete: #f87171;
+  --method-head: #94a3c4;
+  --method-options: #94a3c4;
+
+  --json-key: #7dd3fc;
+  --json-string: #86efac;
+  --json-number: #fbbf24;
+  --json-boolean: #c084fc;
+  --json-null: #94a3c4;
+
+  --radius: 8px;
+  --radius-sm: 6px;
+  --radius-lg: 12px;
+
+  --shadow: 0 16px 40px rgba(2, 6, 23, 0.55);
+  --shadow-sm: 0 2px 8px rgba(2, 6, 23, 0.35);
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", "JetBrains Mono",
+    "Cascadia Code", Menlo, Consolas, monospace;
+
+  --sidebar-width: 292px;
+
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --bg-base: #f2f5fa;
+  --bg-panel: #ffffff;
+  --bg-panel-2: #f8fafc;
+  --bg-inset: #f1f5f9;
+  --bg-hover: #eaeff8;
+  --bg-active: #dfe8f8;
+
+  --border: #dde4ef;
+  --border-strong: #c3cfe2;
+
+  --text: #0f172a;
+  --text-muted: #55637a;
+  --text-faint: #8b98ab;
+
+  --accent: #2563eb;
+  --accent-strong: #1d4ed8;
+  --accent-soft: rgba(37, 99, 235, 0.1);
+
+  --success: #059669;
+  --success-soft: rgba(5, 150, 105, 0.12);
+  --warning: #b45309;
+  --warning-soft: rgba(180, 83, 9, 0.12);
+  --danger: #dc2626;
+  --danger-soft: rgba(220, 38, 38, 0.1);
+
+  --method-get: #059669;
+  --method-post: #b45309;
+  --method-put: #2563eb;
+  --method-patch: #7c3aed;
+  --method-delete: #dc2626;
+  --method-head: #55637a;
+  --method-options: #55637a;
+
+  --json-key: #0e7490;
+  --json-string: #15803d;
+  --json-number: #b45309;
+  --json-boolean: #7c3aed;
+  --json-null: #64748b;
+
+  --shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
+  --shadow-sm: 0 1px 4px rgba(15, 23, 42, 0.08);
+
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg-base);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+p {
+  margin: 0;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+a {
+  color: var(--accent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border: 2px solid transparent;
+  background-clip: content-box;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-faint);
+  background-clip: content-box;
+}
