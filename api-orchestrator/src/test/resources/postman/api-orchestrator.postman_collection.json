@@ -1,0 +1,34 @@
+{
+  "info": {
+    "_postman_id": "71f8e583-ffa9-42d0-9594-82b6cbac875a",
+    "name": "api-orchestrator",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "32124304"
+  },
+  "item": [
+    {
+      "name": "normal-req",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "errorRequest",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "history",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    }
+  ]
+}
