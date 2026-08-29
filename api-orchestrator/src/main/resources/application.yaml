@@ -1,3 +1,71 @@
 spring:
   application:
     name: api-orchestrator
+
+  # Development default: in-memory H2, recreated on every start.
+  datasource:
+    url: ${DB_URL:jdbc:h2:mem:orchestrator;DB_CLOSE_DELAY=-1}
+    username: ${DB_USERNAME:sa}
+    password: ${DB_PASSWORD:}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+  h2:
+    console:
+      enabled: ${H2_CONSOLE_ENABLED:true}
+      path: /h2-console
+
+server:
+  port: ${SERVER_PORT:8080}
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+
+app:
+  executor:
+    default-timeout-ms: ${EXECUTOR_DEFAULT_TIMEOUT_MS:10000}
+    max-timeout-ms: ${EXECUTOR_MAX_TIMEOUT_MS:60000}
+    max-response-bytes: ${EXECUTOR_MAX_RESPONSE_BYTES:1048576}
+    max-persisted-body-chars: ${EXECUTOR_MAX_PERSISTED_BODY_CHARS:20000}
+    max-retries: ${EXECUTOR_MAX_RETRIES:5}
+  security:
+    # Left on by default because the common local use of this tool is calling a service on
+    # localhost. Turn it off for any deployment reachable by someone you do not trust: with it
+    # on, whoever can call /api/requests/execute can reach anything this process can reach.
+    allow-private-networks: ${ALLOW_PRIVATE_NETWORKS:true}
+    allowed-schemes: ${ALLOWED_SCHEMES:http,https}
+    blocked-hosts: ${BLOCKED_HOSTS:169.254.169.254,metadata.google.internal}
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173}
+
+logging:
+  level:
+    com.vivek.platform.apiorchestrator: ${LOG_LEVEL:INFO}
+
+---
+# PostgreSQL profile. Activate with SPRING_PROFILES_ACTIVE=prod (docker-compose does this).
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/orchestrator}
+    username: ${DB_USERNAME:orchestrator}
+    password: ${DB_PASSWORD:orchestrator}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  h2:
+    console:
+      enabled: false
+
+app:
+  security:
+    # A deployed instance should not be able to reach private address space.
+    allow-private-networks: ${ALLOW_PRIVATE_NETWORKS:false}

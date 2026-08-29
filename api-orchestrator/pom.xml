@@ -12,23 +12,20 @@
 	<artifactId>api-orchestrator</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>api-orchestrator</name>
-	<description>Demo project for Spring Boot</description>
-	<url/>
+	<description>HTTP request orchestration engine: collections, environments, assertions and history</description>
+
 	<licenses>
-		<license/>
+		<license>
+			<name>MIT License</name>
+			<url>https://opensource.org/licenses/MIT</url>
+		</license>
 	</licenses>
-	<developers>
-		<developer/>
-	</developers>
-	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
-	</scm>
+
 	<properties>
 		<java.version>17</java.version>
+		<springdoc.version>2.8.9</springdoc.version>
 	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -47,9 +44,27 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
+		<!-- JSONPath: powers response assertions and value extraction for chaining -->
+		<dependency>
+			<groupId>com.jayway.jsonpath</groupId>
+			<artifactId>json-path</artifactId>
+		</dependency>
+
+		<!-- OpenAPI / Swagger UI at /swagger-ui.html -->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>${springdoc.version}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -57,9 +72,17 @@
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- Real local HTTP server for executor tests -->
+		<dependency>
+			<groupId>com.squareup.okhttp3</groupId>
+			<artifactId>mockwebserver</artifactId>
+			<version>4.12.0</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -76,6 +99,29 @@
 							<artifactId>lombok</artifactId>
 						</path>
 					</annotationProcessorPaths>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<systemPropertyVariables>
+						<!--
+						  Every NIO Selector - so every Netty event loop, so every WebClient call -
+						  needs a java.nio.channels.Pipe. On Windows the JDK builds one from a Unix
+						  domain socket placed in jdk.net.unixdomain.tmpdir (defaulting to
+						  java.io.tmpdir), and falls back to a loopback TCP connection if that
+						  fails. On machines where the user's temp directory refuses the AF_UNIX
+						  bind and local security software also blocks the loopback fallback, the
+						  fallback surfaces as "failed to create a child event loop" and every
+						  executor test fails with a transport error instead of a response.
+
+						  Pointing the socket at the module's own build directory sidesteps both:
+						  target/ always exists by the time tests run, is writable by definition,
+						  and is on the same volume as the build. Harmless on Linux and macOS.
+						-->
+						<jdk.net.unixdomain.tmpdir>${project.build.directory}</jdk.net.unixdomain.tmpdir>
+					</systemPropertyVariables>
 				</configuration>
 			</plugin>
 			<plugin>
