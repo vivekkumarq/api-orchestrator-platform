@@ -1,0 +1,83 @@
+name: CI
+
+on:
+  push:
+    branches: [main, revamp]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Backend (Java 17)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api-orchestrator
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          # Caches ~/.m2/repository keyed on the POM.
+          cache: maven
+
+      - name: Build and test
+        run: ./mvnw -B --no-transfer-progress clean verify
+
+      - name: Publish test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-surefire-reports
+          path: api-orchestrator/target/surefire-reports/
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Upload jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-orchestrator-jar
+          path: api-orchestrator/target/*.jar
+          retention-days: 7
+
+  frontend:
+    name: Frontend (Node 20)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api-orchestrator-ui
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: api-orchestrator-ui/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+      - name: Upload bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-orchestrator-ui-dist
+          path: api-orchestrator-ui/dist/
+          retention-days: 7
